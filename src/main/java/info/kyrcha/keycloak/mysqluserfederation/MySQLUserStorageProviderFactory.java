@@ -29,6 +29,7 @@ import org.keycloak.models.RealmModel;
 import org.keycloak.provider.ProviderConfigProperty;
 import org.keycloak.provider.ProviderConfigurationBuilder;
 import org.keycloak.storage.UserStorageProviderFactory;
+import org.mindrot.jbcrypt.BCrypt;
 
 public class MySQLUserStorageProviderFactory implements UserStorageProviderFactory<MySQLUserStorageProvider> {
 
@@ -49,7 +50,7 @@ public class MySQLUserStorageProviderFactory implements UserStorageProviderFacto
                 .type(ProviderConfigProperty.STRING_TYPE).label("Password Column").defaultValue("password")
                 .helpText("Column name that holds the passwords").add().property().name("hash")
                 .type(ProviderConfigProperty.LIST_TYPE).label("Hash Algorithm").defaultValue("SHA1")
-                .options(Arrays.asList("SHA1", "MD5")).helpText("Algorithm used for hashing").add().build();
+                .options(Arrays.asList("SHA1", "MD5", "BCrypt")).helpText("Algorithm used for hashing").add().build();
     }
 
     @Override

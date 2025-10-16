@@ -236,9 +236,13 @@ public class MySQLUserStorageProvider
         String hex = null;
         if (this.config.getConfig().getFirst("hash").equalsIgnoreCase("SHA1")) {
             hex = DigestUtils.sha1Hex(input.getChallengeResponse());
-        } else {
+        } else if (this.config.getConfig().getFirst("hash").equalsIgnoreCase("MD5")) {
             hex = DigestUtils.md5Hex(input.getChallengeResponse());
-        }
+        } else if (this.config.getConfig().getFirst("hash").equalsIgnoreCase("BCrypt")) {
+	    // JBCrypt doesn't have a "hex" function, it's easier to get it to
+	    // check the password and return here.
+	    return BCrypt.checkpw( input.getChallengeResponse(), password );
+	}
         return password.equalsIgnoreCase(hex);
     }
 

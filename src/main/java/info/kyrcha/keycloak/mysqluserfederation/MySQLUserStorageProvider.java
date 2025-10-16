@@ -37,6 +37,7 @@ import org.keycloak.storage.StorageId;
 import org.keycloak.storage.UserStorageProvider;
 import org.keycloak.storage.adapter.AbstractUserAdapter;
 import org.keycloak.storage.user.UserLookupProvider;
+import org.mindrot.jbcrypt.BCrypt;
 
 public class MySQLUserStorageProvider
         implements UserStorageProvider, UserLookupProvider, CredentialInputValidator, CredentialInputUpdater {

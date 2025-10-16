@@ -8,10 +8,7 @@
 
 plugins {
     // Apply the java-library plugin to add support for Java Library
-    //id 'com.github.johnrengelman.shadow' version '5.2.0'
-    //id 'com.gradleup.shadow'// version '5.2.0'
     id("com.gradleup.shadow") version '9.2.2'
-    //id("de.svenkubiak.jBCrypt") version '0.4.3'
     id 'java-library'
 }
 
@@ -26,7 +23,6 @@ repositories {
 }
 
 dependencies {
-    //implementation 'com.github.jeremyh:JBCrypt:jbcrypt-0.4'
     implementation "org.mindrot:jbcrypt:0.4"
 
     // https://mvnrepository.com/artifact/org.keycloak/keycloak-core

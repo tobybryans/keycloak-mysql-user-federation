@@ -20,7 +20,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.jboss.logging.Logger;
@@ -31,6 +33,7 @@ import org.keycloak.credential.CredentialInputValidator;
 import org.keycloak.credential.CredentialModel;
 import org.keycloak.models.KeycloakSession;
 import org.keycloak.models.RealmModel;
+import org.keycloak.models.SubjectCredentialManager;
 import org.keycloak.models.UserModel;
 import org.keycloak.storage.ReadOnlyException;
 import org.keycloak.storage.StorageId;
@@ -55,7 +58,7 @@ public class MySQLUserStorageProvider
     }
 
     @Override
-    public UserModel getUserByUsername(String username, RealmModel realm) {
+    public UserModel getUserByUsername(RealmModel realm, String username) {
         PreparedStatement pstmt = null;
         ResultSet rs = null;
         UserModel adapter = null;
@@ -113,19 +116,111 @@ public class MySQLUserStorageProvider
             public String getUsername() {
                 return username;
             }
-        };
+
+	    @Override
+            public SubjectCredentialManager credentialManager() {
+                return new SubjectCredentialManager() {
+                    @Override
+                    public boolean isValid(List<CredentialInput> inputs) {
+			// For read-only providers, this typically returns false
+                        // since credential validation is handled elsewhere
+                        return false;
+                    }
+        
+                    @Override
+                    public boolean updateCredential(CredentialInput input) {
+                        return false; // Read-only provider
+                    }
+        
+                    @Override
+                    public void updateStoredCredential(CredentialModel cred) {
+                        // Read-only provider - no-op
+                    }
+        
+                    @Override
+                    public CredentialModel createStoredCredential(CredentialModel cred) {
+                        throw new UnsupportedOperationException("createStoredCredential not supported for read-only provider");
+                    }
+        
+                    @Override
+                    public boolean removeStoredCredentialById(String id) {
+                        return false; // Read-only provider
+                    }
+        
+                    @Override
+                    public CredentialModel getStoredCredentialById(String id) {
+                        return null; // No stored credentials in read-only provider
+                    }
+        
+                    @Override
+                    public Stream<CredentialModel> getStoredCredentialsStream() {
+                        return Stream.empty(); // No stored credentials
+                    }
+        
+                    @Override
+                    public Stream<CredentialModel> getStoredCredentialsByTypeStream(String type) {
+                        return Stream.empty(); // No stored credentials
+                    }
+        
+                    @Override
+                    public CredentialModel getStoredCredentialByNameAndType(String name, String type) {
+                        return null; // No stored credentials
+                    }
+        
+                    @Override
+                    public boolean moveStoredCredentialTo(String id, String newPreviousCredentialId) {
+                        return false; // Read-only provider
+                    }
+        
+                    @Override
+                    public void updateCredentialLabel(String credentialId, String credentialLabel) {
+                        // Read-only provider - no-op
+                    }
+        
+                    @Override
+                    public void disableCredentialType(String credentialType) {
+                        // Read-only provider - no-op
+                    }
+        
+                    @Override
+                    public Stream<String> getDisableableCredentialTypesStream() {
+                        return Stream.empty();
+                    }
+        
+                    @Override
+                    public boolean isConfiguredFor(String type) {
+                        return MySQLUserStorageProvider.this.supportsCredentialType(type);
+                    }
+        
+                    @Override
+                    public boolean isConfiguredLocally(String type) {
+                        return false; // Deprecated, but still required
+                    }
+        
+                    @Override
+                    public Stream<String> getConfiguredUserStorageCredentialTypesStream() {
+                        return Stream.empty(); // Deprecated, but still required
+                    }
+        
+                    @Override
+                    public CredentialModel createCredentialThroughProvider(CredentialModel model) {
+                        throw new UnsupportedOperationException("createCredentialThroughProvider not supported for read-only provider");
+                    }
+                };
+            }
+	};
     }
 
     @Override
-    public UserModel getUserById(String id, RealmModel realm) {
+    public UserModel getUserById(RealmModel realm, String id) {
         StorageId storageId = new StorageId(id);
         String username = storageId.getExternalId();
-        return getUserByUsername(username, realm);
+        return getUserByUsername(realm, username);
     }
 
     @Override
-    public UserModel getUserByEmail(String email, RealmModel realm) {
-        return null;
+    public UserModel getUserByEmail(RealmModel realm, String email) {
+        return getUserByEmail( realm, email );
     }
 
     @Override
@@ -261,8 +356,8 @@ public class MySQLUserStorageProvider
     }
 
     @Override
-    public Set<String> getDisableableCredentialTypes(RealmModel realm, UserModel user) {
-        return Collections.EMPTY_SET;
+    public Stream<String> getDisableableCredentialTypesStream( RealmModel realm, UserModel user) {
+	return Stream.empty();
     }
 
     @Override

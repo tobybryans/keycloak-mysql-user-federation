@@ -26,12 +26,15 @@ dependencies {
     implementation "org.mindrot:jbcrypt:0.4"
 
     // https://mvnrepository.com/artifact/org.keycloak/keycloak-core
-    implementation group: 'org.keycloak', name: 'keycloak-core', version: '10.0.0'
+    implementation group: 'org.keycloak', name: 'keycloak-core', version: '26.3.4'
 
-    implementation group: 'org.keycloak', name: 'keycloak-server-spi', version: '10.0.0'
+    implementation group: 'org.keycloak', name: 'keycloak-server-spi', version: '26.3.4'
+    
+    // Storage providers have moved to storage models
+    implementation group: 'org.keycloak', name: 'keycloak-model-storage', version: '26.3.4'
 
     // https://mvnrepository.com/artifact/org.keycloak/keycloak-adapter-spi
-    implementation group: 'org.keycloak', name: 'keycloak-adapter-spi', version: '10.0.0'
+    implementation group: 'org.keycloak', name: 'keycloak-adapter-spi', version: '26.3.4'
 
     // https://mvnrepository.com/artifact/org.jboss.logging/jboss-logging
     implementation group: 'org.jboss.logging', name: 'jboss-logging', version: '3.4.0.Final'

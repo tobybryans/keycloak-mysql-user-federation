@@ -54,3 +54,22 @@ dependencies {
     // Use JUnit test framework
     // testImplementation 'junit:junit:4.12'
 }
+
+shadowJar {
+    // Exclude all Keycloak and jboss dependencies since they're provided by the Keycloak runtime
+    dependencies {
+        exclude(dependency('org.keycloak:.*'))
+//        exclude(dependency('org.keycloak:keycloak-core'))
+//        exclude(dependency('org.keycloak:keycloak-server-spi'))
+//        exclude(dependency('org.keycloak:keycloak-model-storage'))
+//        exclude(dependency('org.keycloak:keycloak-adapter-spi'))
+//        exclude(dependency('org.jboss.logging:jboss-logging'))
+//        exclude(dependency('commons-codec:commons-codec'))
+//        exclude(dependency('mysql:mysql-connector-java'))
+//        exclude(dependency('com.google.guava:guava'))
+    }
+
+    // Alternative: exclude specific Keycloak modules if you need more control
+    // dependencies {
+    // }
+}
